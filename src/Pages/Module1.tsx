@@ -151,7 +151,7 @@ const Module1 = () => {
       onPrevious={handlePrevious} onNext={handleNext}/>
       <Breadcrumb paths={[{ name: 'Home', link: '/' },{ name: 'Part 1', link: '/part1' }]} />
       {/* Main Content */}
-      <div className="flex p-[10px]">
+      <div className="flex flex-col md:flex-row p-[10px]">
         {/* Sidebar */}
         <Sidebar
           sections={sections}

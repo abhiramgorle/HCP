@@ -152,9 +152,9 @@ const Module2 = () => {
     <div className='flex flex-col'>
       <ModuleHead leftButtonText="Previous" headingText="Part II: Facilitating Open and Supportive Communication in the Family" rightButtonText='Next' subHeadingText={sections.find(section => section.id === currentSection)?.title || ''} 
       onPrevious={handlePrevious} onNext={handleNext}/>
-      <Breadcrumb paths={[{ name: 'Home', link: '/' },{ name: 'Part 1', link: '/part1' }]} />
+      <Breadcrumb paths={[{ name: 'Home', link: '/' },{ name: 'Part 2', link: '/part2' }]} />
       {/* Main Content */}
-      <div className="flex p-[10px]">
+      <div className="flex flex-col md:flex-row p-[10px]">
         {/* Sidebar */}
         <P2Sidebar
           sections={sections}
@@ -169,6 +169,7 @@ const Module2 = () => {
       </div>
       <ProgressBar progress={progress} onPrevious={handlePrevious} onNext={handleNext} />
     </div>
+    
   );
 };
 

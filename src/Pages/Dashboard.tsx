@@ -5,9 +5,14 @@ interface User {
   created_at: string; // ISO date string
 }
 
-interface DataPoint {
+interface new_users{
   date: string;
   count: number;
+}
+interface DataPoint {
+  new_users: new_users[];
+  completed_part2_count: number;
+  started_part1_not_part2_count: number;
 }
 interface SectionTimeData {
     section_id: string | number; // Can be number or string from API
@@ -15,7 +20,7 @@ interface SectionTimeData {
   }
   
   // Define an array of colors for the bars
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC0CB', '#A0522D'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8' , '#82CA9D', '#FFC0CB', '#A0522D', '#D2691E', '#FF6347', '#4682B4', '#6A5ACD', '#20B2AA', '#FF4500', '#2E8B57', '#8B4513'];
   
 
 const Dashboard: React.FC = () => {
@@ -103,7 +108,7 @@ useEffect(() => {
                   </div>
               </div>
         </div>
-        <div className='mt-10 grid grid-cols-4 gap-2 '>
+        <div className='mt-10 grid grid-rows-1 md:grid-cols-4 gap-2 '>
           <div className='flex flex-col items-start shadow-sm p-5 border-l-4 border-[#CE2C37]'>
             <span className='text-gray-400 font-bold text-xl'>New Users</span>
             <span className='text-black font-bold text-3xl'>{recentUsers}</span>
@@ -189,7 +194,7 @@ useEffect(() => {
             <Tooltip formatter={(value: number) => `${value.toFixed(2)} seconds`} />
             <Legend />
             <Bar dataKey="average_time_seconds" name="Avg. Completion Time">
-              {data.map((entry, index) => (
+              {data2.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Bar>

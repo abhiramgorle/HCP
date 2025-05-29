@@ -83,46 +83,43 @@ const HOPE_Activity = () => {
                 </div>
                 
                 </div>
-                <div className='bg-gray-100 flex flex-row items-center p-2 rounded-lg gap-4'>
-                    <div className='flex flex-col items-start w-4/8'>
-                        <span className='font-bold text-sm'>Directions</span>
-                        <span className='font-light'>Rate the message as high or low on each of the four dimensions.</span>
-
-                    </div>
-                    {dimensions.map((dimension) => (
-                        <div className='flex flex-col w-3/8 gap-1' key={dimension}>
-                            <span className='text-sm font-bold m-auto uppercase'>{dimension}</span>
-                            <div className='flex flex-row  h-8 items-center justify-around'>
-                                <button
-                                    className={`text-black px-3 font-extralight text-center ${
-                                        responses[activity.id]?.[dimension] === 'Low'
-                                            ? activity[dimension.toLowerCase() as keyof typeof activity] === 'Low'
-                                                ? 'bg-blue-500 text-white'
-                                                : 'bg-red-500 text-white'
-                                            : 'bg-gray-300'
-                                    }`}
-                                    onClick={() => handleResponse(activity.id, dimension, 'Low')}
-                                >
-                                    Low
-                                </button>
-                                <button
-                                    className={`text-black px-3 font-extralight text-center ${
-                                        responses[activity.id]?.[dimension] === 'High'
-                                            ? activity[dimension.toLowerCase() as keyof typeof activity] === 'High'
-                                                ? 'bg-blue-500 text-white'
-                                                : 'bg-red-500 text-white'
-                                            : 'bg-gray-300'
-                                    }`}
-                                    onClick={() => handleResponse(activity.id, dimension, 'High')}
-                                >
-                                    High
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                   
-                   
+                <div className="bg-gray-100 flex flex-col sm:flex-row items-center p-2 rounded-lg gap-4">
+              <div className="flex flex-col items-start w-full sm:w-4/8">
+                <span className="font-bold text-sm">Directions</span>
+                <span className="font-light">Rate the message as high or low on each of the four dimensions.</span>
+              </div>
+              {dimensions.map((dimension) => (
+                <div className="flex flex-col w-full sm:w-3/8 gap-1" key={dimension}>
+                  <span className="text-sm font-bold m-auto uppercase">{dimension}</span>
+                  <div className="flex flex-row h-8 items-center justify-around">
+                    <button
+                      className={`text-black px-3 font-extralight text-center ${
+                        responses[activity.id]?.[dimension] === 'Low'
+                          ? activity[dimension.toLowerCase() as keyof typeof activity] === 'Low'
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-red-500 text-white'
+                          : 'bg-gray-300'
+                      }`}
+                      onClick={() => handleResponse(activity.id, dimension, 'Low')}
+                    >
+                      Low
+                    </button>
+                    <button
+                      className={`text-black px-3 font-extralight text-center ${
+                        responses[activity.id]?.[dimension] === 'High'
+                          ? activity[dimension.toLowerCase() as keyof typeof activity] === 'High'
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-red-500 text-white'
+                          : 'bg-gray-300'
+                      }`}
+                      onClick={() => handleResponse(activity.id, dimension, 'High')}
+                    >
+                      High
+                    </button>
+                  </div>
                 </div>
+              ))}
+            </div>
             </div>
                 
         ))}
