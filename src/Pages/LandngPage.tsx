@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useEffect} from 'react';
+import { useLocation } from 'react-router-dom';
 import img1 from "../assets/Container4.png"
 import sec2icon1 from "../assets/icons/Container-5.png"
 import sec2icon2 from "../assets/icons/Container-6.png"
@@ -12,6 +13,18 @@ import img2 from "../assets/Container-13.png"
 import img3 from "../assets/Container-14.png"
 
 const LandingPage: React.FC = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to the section if a fragment identifier exists in the URL
+    const hash = location.hash;
+    if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
   return (
     <div className="font-sans text-black">
       {/* Hero Section */}
@@ -61,7 +74,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Practice Skills */}
-      <section className="bg-[#FFFFFF] py-16 px-16 flex flex-row justify-around flex-row-reverse">
+      <section className="bg-[#FFFFFF] py-16 px-16 flex flex-row justify-around ">
         <div className='w-1/3 mr-4 my-auto'>
         <h2 className="text-4xl font-bold mb-2">Practice the Skills That Matter</h2>
         <p className="mb-8 text-sm text-gray-600">Communication skills are crucial during cancer diagnosis and treatment.</p>
@@ -95,7 +108,7 @@ const LandingPage: React.FC = () => {
     
 
       {/* Part 1 */}
-      <section className="bg-white py-12 px-16  md:grid-cols-2 gap-4 items-center flex justify-around">
+      <section id="child" className="bg-white py-12 px-16  md:grid-cols-2 gap-4 items-center flex justify-around">
         <div className='w-1/2'>
           <h3 className="text-3xl font-bold mb-4">Part 1: Navigating Cancer Information in Online and Clinical Settings</h3>
           <p className="mb-4 text-sm text-gray-600">
@@ -109,7 +122,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Part II */}
-      <section className="bg-[#FFF6F6] py-12 px-auto md:grid-cols-2 gap-4 items-center flex justify-around">
+      <section id="spouse" className="bg-[#FFF6F6] py-12 px-auto md:grid-cols-2 gap-4 items-center flex justify-around">
         <div className="">
           <img src={img3} alt="Family with doctor" />
         </div>

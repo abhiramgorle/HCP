@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface SidebarProps {
-  sections: { id: string; title: string }[];
+  sections: { id: string; title: string, sub:boolean }[];
   currentSection: string;
   onSectionChange: (id: string) => void;
 }
@@ -19,6 +19,7 @@ const P2Sidebar: React.FC<SidebarProps> = ({ sections, currentSection, onSection
             className={`cursor-pointer px-4 mb-1 text-black hover:text-red-500 ${
               currentSection === section.id ? 'font-extrabold ' : 'font-extralight '
             }`}
+            style={{ paddingLeft: section.sub ? '1rem' : '0' }}
             onClick={() => onSectionChange(section.id)}
           >
             {section.title}

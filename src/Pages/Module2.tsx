@@ -25,21 +25,21 @@ import Conclusion from '../Module1/Part2/Conclusion';
 
 const Module2 = () => {
   const sections = [
-    { id: 'introduction2', title: 'Introduction' },
-    { id: 'connecting-meeting', title: 'Connecting to Meaning' },
-    {id: 'caregivers-stories1', title: 'Caregivers Stories'},
-    {id:'reflection-activity1', title: 'Reflection Activity'},
-    { id: 'strengthening-family', title: 'Strengthening Family Bonds' },
-    {id: 'caregivers-stories2', title: 'Caregivers Stories'},
-    { id: 'reflection-activity2', title: 'Reflection Activity'},
-    {id:'challenges-communication', title: 'Challenges and Communication Skills'},
-    {id:'caregivers-stories3', title: 'Caregivers Stories'},
-    {id:'strategies-activity', title: 'Strategies Activity'},
-    {id:  'practicing-skills' , title: 'Practicing Skills'},
-    {id: 'relational-intimacy', title: 'Relational Intimacy'},
-    {id: 'future-uncertainty', title: 'Futere Uncertainty and Mortality'},
-    {id: 'distressing-emotions', title: 'Distressing Emotions and Concerns'}, 
-    {id: 'conclusion', title: 'Conclusion'},
+    { id: 'introduction2', title: 'Introduction', sub:false},
+    { id: 'connecting-meeting', title: 'Connecting to Meaning', sub:false},
+    {id: 'caregivers-stories1', title: 'Caregivers Stories', sub:false},
+    {id:'reflection-activity1', title: 'Reflection Activity', sub:false},
+    { id: 'strengthening-family', title: 'Strengthening Family Bonds', sub:false},
+    {id: 'caregivers-stories2', title: 'Caregivers Stories', sub:false},
+    { id: 'reflection-activity2', title: 'Reflection Activity', sub:true},
+    {id:'challenges-communication', title: 'Challenges and Communication Skills', sub:false},
+    {id:'caregivers-stories3', title: 'Caregivers Stories', sub:false},
+    {id:'strategies-activity', title: 'Strategies Activity', sub:false},
+    {id:  'practicing-skills' , title: 'Practicing Skills', sub:false},
+    {id: 'relational-intimacy', title: 'Relational Intimacy', sub:false},
+    {id: 'future-uncertainty', title: 'Futere Uncertainty and Mortality', sub:false},
+    {id: 'distressing-emotions', title: 'Distressing Emotions and Concerns', sub:false}, 
+    {id: 'conclusion', title: 'Conclusion', sub:false},
   ];
 
   const [currentSection, setCurrentSection] = useState(sections[0].id);

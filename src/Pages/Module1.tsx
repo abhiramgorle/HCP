@@ -22,21 +22,21 @@ import Communication_with_doctors from '../Module1/Part1/Communication_with_doct
 
 const Module1 = () => {
   const sections = [
-    { id: 'introduction1', title: 'Introduction' },
-    { id: 'critical-eliteracy', title: 'Critical eHealth Literacy' },
-    {id: 'marcosStory-chapter1', title: 'Marcos Story Chapter 1'},
-    {id:'hope-activity', title: 'Hope Activity'},
+    { id: 'introduction1', title: 'Introduction', sub:false},
+    { id: 'critical-eliteracy', title: 'Critical eHealth Literacy', sub:false },
+    {id: 'marcosStory-chapter1', title: 'Marcos Story Chapter 1', sub:false},
+    {id:'hope-activity', title: 'Hope Activity', sub:false},
     { id: 'communicative-literacy', title: 'Communicative eHealth Literacy' },
-    {id: 'marcosStory-chapter2', title: 'Marcos Story Chapter 2'},
+    {id: 'marcosStory-chapter2', title: 'Marcos Story Chapter 2', sub:false},
     { id: 'clinical-literacy', title: 'Clinical eHealth Literacy' },
-    {id:'marcosStory-chapter3', title: 'Marcos Story Chapter 3'},
-    {id:'communication-with-doctors', title: 'Communication with Doctors'},
-    {id:'paces-introduction', title: 'PACES Introduction'},
-    {id:  'p-present' , title: 'P: Present Information'},
-    {id: 'p-ask', title: 'A: Ask Questions'},
-    {id: 'p-clarify', title: 'C: Check Understanding'},
-    {id: 'p-express', title: 'E: Express Concerns'}, 
-    {id: 'p-state', title: 'S: State Preferences'},
+    {id:'marcosStory-chapter3', title: 'Marcos Story Chapter 3', sub:false},
+    {id:'communication-with-doctors', title: 'Communication with Doctors', sub:false},
+    {id:'paces-introduction', title: 'PACES Introduction', sub:false},
+    {id:  'p-present' , title: 'P: Present Information', sub:true},
+    {id: 'p-ask', title: 'A: Ask Questions', sub:true},
+    {id: 'p-clarify', title: 'C: Check Understanding', sub:true},
+    {id: 'p-express', title: 'E: Express Concerns', sub:true}, 
+    {id: 'p-state', title: 'S: State Preferences', sub:true},
   ];
 
   const [currentSection, setCurrentSection] = useState(sections[0].id);
