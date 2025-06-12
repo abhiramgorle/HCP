@@ -14,7 +14,8 @@ const Courses = () => {
   useEffect(() => {
     if(!token) return;
     const fetchProgress = async () => {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/get_part_status.php`,
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${API_BASE}/get_part_status.php`,
         {
           headers:{
             "Authorization": `Bearer ${token}`, // Use token for authorization
@@ -36,7 +37,8 @@ const Courses = () => {
   }, [token]);
 
   const handleGoToPart = async (part: number) => {
-    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/get_progress.php`,
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${API_BASE}/get_progress.php`,
       {
         headers:{
           "Authorization": `Bearer ${token}`, // Use token for authorization

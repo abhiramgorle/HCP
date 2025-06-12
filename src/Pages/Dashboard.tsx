@@ -37,7 +37,8 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     // Fetch user data from API
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/get_user_stats.php`,{
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+fetch(`${API_BASE}/get_user_stats.php`,{
       headers:{
         "Authorization": `Bearer ${token}`, // Use token for authorization
         "Content-Type": "application/json" // Ensure the server knows we're sending JSON
@@ -76,7 +77,8 @@ const Dashboard: React.FC = () => {
 useEffect(() => {
     const fetchSectionAverageTime = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/get_section_average_time.php`,
+            const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const response = await fetch(`${API_BASE}/get_section_average_time.php`,
               {
                 headers:{
                   "Authorization": `Bearer ${token}`, // Use token for authorization

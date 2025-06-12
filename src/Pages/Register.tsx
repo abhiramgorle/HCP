@@ -44,7 +44,8 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/register.php`, { 
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const response = await fetch(`${API_BASE}/register.php`, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

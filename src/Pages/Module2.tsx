@@ -108,7 +108,8 @@ const Module2 = () => {
     const currentIndex = sections.findIndex((section) => section.id === currentSection);
     const userEmail = JSON.parse(localStorage.getItem("currentUser") || "{}").email;
 
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/update_progress.php`, {
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+fetch(`${API_BASE}/update_progress.php`, {
       method: "POST",
       headers:{
         "Authorization": `Bearer ${token}`, // Use token for authorization
@@ -143,7 +144,8 @@ const Module2 = () => {
   useEffect(() => {
     if(!token) return;
     const email = JSON.parse(localStorage.getItem("currentUser") || "{}").email;
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/get_progress.php`,
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+fetch(`${API_BASE}/get_progress.php`,
       {headers:{
         "Authorization": `Bearer ${token}`, // Use token for authorization
         "Content-Type": "application/json" // Ensure the server knows we're sending JSON
