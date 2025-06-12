@@ -1,0 +1,8 @@
+[build]
+  # adjust if your build output folder is not "dist"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
