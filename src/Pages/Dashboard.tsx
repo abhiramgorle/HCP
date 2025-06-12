@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '../auth/AuthContext';
 import { AreaChart, Area,LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts'
 interface User {
   created_at: string; // ISO date string
@@ -20,7 +21,7 @@ interface SectionTimeData {
   }
   
   // Define an array of colors for the bars
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8' , '#82CA9D', '#FFC0CB', '#A0522D', '#D2691E', '#FF6347', '#4682B4', '#6A5ACD', '#20B2AA', '#FF4500', '#2E8B57', '#8B4513'];
+const COLORS = ['#0088FE', '#00C49F', '#FfBB28', '#FF8042', '#8884D8' , '#82CA9D', '#FFC0CB', '#A0522D', '#D2691E', '#FF6347', '#4682B4', '#6A5ACD', '#20B2AA', '#FF4500', '#2E8B57', '#8B4513'];
   
 
 const Dashboard: React.FC = () => {
@@ -32,9 +33,16 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const {token} = useAuth();
+
   useEffect(() => {
     // Fetch user data from API
-    fetch('http://localhost:8888/php-backend-api/api/get_user_stats.php')
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/get_user_stats.php`,{
+      headers:{
+        "Authorization": `Bearer ${token}`, // Use token for authorization
+        "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+      }
+    })
         .then(response => response.json())
         .then((data: DataPoint[]) => {
 
@@ -68,7 +76,14 @@ const Dashboard: React.FC = () => {
 useEffect(() => {
     const fetchSectionAverageTime = async () => {
         try {
-            const response = await fetch('http://localhost:8888/php-backend-api/api/get_section_average_time.php');
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/get_section_average_time.php`,
+              {
+                headers:{
+                  "Authorization": `Bearer ${token}`, // Use token for authorization
+                  "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+                }
+              }
+            );
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

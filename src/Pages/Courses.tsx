@@ -2,15 +2,26 @@ import sam from "../assets/sam.png"
 import sam2 from "../assets/sam2.png"
 import alarm from "../assets/icons/alarm.png"
 import { useState, useEffect } from 'react'
+import { useAuth } from "../auth/AuthContext"
 
 const Courses = () => {
   const email = JSON.parse(localStorage.getItem("currentUser") || "{}").email;
   const [isPart1Completed, setIsPart1Completed] = useState(false);
   const [isPart2Completed, setIsPart2Completed] = useState(false);
 
+  const {token} = useAuth(); // Get the token from the auth context
+
   useEffect(() => {
+    if(!token) return;
     const fetchProgress = async () => {
-      const res = await fetch(`http://localhost:8888/php-backend-api/api/get_part_status.php?email=${email}`);
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/get_part_status.php`,
+        {
+          headers:{
+            "Authorization": `Bearer ${token}`, // Use token for authorization
+            "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+          }
+        }
+      );
       const data = await res.json();
       console.log(data);
 
@@ -22,10 +33,17 @@ const Courses = () => {
       console.log(isPart1Completed, isPart2Completed);
     };
     fetchProgress();
-  }, []);
+  }, [token]);
 
   const handleGoToPart = async (part: number) => {
-    const res = await fetch(`http://localhost:8888/php-backend-api/api/get_progress.php?email=${email}`);
+    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/get_progress.php`,
+      {
+        headers:{
+          "Authorization": `Bearer ${token}`, // Use token for authorization
+          "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+        }
+      }
+    );
     const data = await res.json();
     console.log(data, "dataaaaaaa");
     const last = data.find((d: any) => d.part_id === part && d.is_completed === 0);

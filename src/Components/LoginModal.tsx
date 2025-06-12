@@ -53,7 +53,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccessRedirectTo =
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const { login: authLogin } = useAuth();
 
     useEffect(() => {
@@ -76,7 +76,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccessRedirectTo =
     }, [isOpen]);
 
     useEffect(() => {
-      const handleKeyDown = (e) => {
+      const handleKeyDown = (e  : KeyboardEvent) => {
         if (e.key === 'Escape' && isOpen) {
           onClose();
         }
@@ -88,38 +88,32 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccessRedirectTo =
       };
     }, [isOpen, onClose]);
   
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e :React.FormEvent) => {
       e.preventDefault();
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:8888/php-backend-api/api/login.php", {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/login.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
+            });  const data = await res.json();
+      if (!res.ok || !data.success) {
         throw new Error(data.message || `Error: ${res.status}`);
       }
 
-      
-      if (data.success) { 
-        console.log("Login successful:", data);
-        authLogin(data.user);
-        setIsSuccess(true);
-        setIsLoading(false);
+      console.log("Login successful:", data);
+      authLogin(data.user,data.token);
+      setIsSuccess(true);
+      setIsLoading(false);
 
-        setTimeout(() => {
-          onClose();
-          window.location.href = onLoginSuccessRedirectTo;
-        }, 2000); 
-      } else {
-        // Handle login failure from backend 
-        throw new Error(data.message || "Login failed. Please check your credentials.");
-      }
+      setTimeout(() => {
+        onClose();
+        window.location.href = onLoginSuccessRedirectTo;
+      }, 2000); 
+      
     } catch (err : any) {
       console.error("Login error:", err);
       setError(err.message || "An unexpected error occurred.");

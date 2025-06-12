@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-
+import { CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import AvatarFeedback from './AvatarFeedback';
 
 const ItemTypes = {
   TEXT: 'text',
@@ -13,179 +14,284 @@ interface DragItem {
   type: string;
 }
 
-interface PlaceholderProps {
-  id: number;
-  text: string | null;
-  label: string;
-  onDrop: (id: number, item: DragItem) => void;
-  onMove: (targetId: number, sourceId: number) => void;
+// 'James Message content with highlighted sections
+const letterSections = [
+  { id: 'greeting', text: 'Hi Brett', type: 'normal' },
+  { id: 'thanks', text: 'Thanks so much the message.', type: 'normal' },
+  { id: 'reflection', text: 'I watched the TikTok video you sent about the potential of Ivermectin to cure your mom’s cancer. ', type: 'draggable', color: 'bg-purple-200' },
+  { id: 'concern', text: 'I am concerned about the credibility of this information because there aren’t studies showing it is safe or effective to treat cancer in humans.', type: 'draggable', color: 'bg-green-200' },
+  { id: 'separator', text: '', type: 'separator' }, // New separator
+  { id: 'understanding', text: "Like you, I want to see your mom’s cancer treated in the best way possible.", type: 'draggable', color: 'bg-blue-200' },
+  { id: 'verification', text: "I will share this with your mom, and we can talk to her doctor about it at our next appointment.", type: 'draggable', color: 'bg-red-200' },
+  { id: 'separator', text: '', type: 'separator' }, // New separator
+  { id: 'closing', text: 'Thanks again and we’ll let you know what the doctor says. ', type: 'normal' },
+  { id: 'signature', text: 'James', type: 'normal' }
+];
+
+const questions = [
+  {
+    id: 'understanding',
+    text: "Which part shows that James is trying to understand the other’s point of view? ",
+    correctAnswer: "Like you, I want to see your mom’s cancer treated in the best way possible.",
+    color: 'border-blue-400'
+  },
+  {
+    id: 'acknowledgment',
+    text: 'Which part of the message acknowledges the take home message?',
+    correctAnswer: 'I watched the TikTok video you sent about the potential of Ivermectin to cure your mom’s cancer. ',
+    color: 'border-purple-400'
+  },
+  {
+    id: 'verification',
+    text: 'Which part shows James outlining the verification steps he will take?',
+    correctAnswer: "I will share this with your mom, and we can talk to her doctor about it at our next appointment.",
+    color: 'border-red-400'
+  },
+  {
+    id: 'reflection',
+    text: 'Which part of the message reflects and describes?',
+    correctAnswer: 'I am concerned about the credibility of this information because there aren’t studies showing it is safe or effective to treat cancer in humans.',
+    color: 'border-green-400'
+  }
+];
+
+interface DropZoneProps {
+  question: typeof questions[0];
+  droppedText: string | null;
+  onDrop: (questionId: string, text: string) => void;
+  isCorrect: boolean | null;
 }
 
-const Placeholder: React.FC<PlaceholderProps> = ({ id, text, label, onDrop, onMove }) => {
-  const ref = useRef(null);
-
+const DropZone: React.FC<DropZoneProps> = ({ question, droppedText, onDrop, isCorrect }) => {
   const [, drop] = useDrop({
     accept: ItemTypes.TEXT,
-    drop: (item: DragItem) => onDrop(id, item),
+    drop: (item: DragItem) => {
+      onDrop(question.id, item.text);
+    },
   });
-
-  const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.TEXT,
-    item: { id, text: text || '', type: ItemTypes.TEXT },
-    canDrag: !!text,
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  drag(drop(ref));
 
   return (
     <div
-      ref={ref}
-      className={` w-48 h-32 border-2 border-dashed rounded-md flex flex-col items-center justify-center ${
-        text ? 'bg-gray-100 border-gray-400' : 'border-gray-300'
-      } ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+      ref={drop}
+      className={`min-h-24  p-4 border-2 border-dashed rounded-lg transition-all duration-200 ${
+        droppedText 
+          ? `bg-gray-50 ${question.color} border-solid` 
+          : 'border-gray-300 hover:border-gray-400'
+      }`}
     >
-      {text ? (
-        <>
-          <div className="text-xs text-gray-600 mb-1 text-center">{label}</div>
-          <div>{text}</div>
-        </>
-      ) : (
-        label
+      <div className="text-sm font-medium text-gray-700 mb-2">
+        {question.text}
+      </div>
+      {droppedText && (
+        <div className="flex items-start gap-2">
+          <div className="flex-1 text-sm bg-white p-2 rounded border">
+            {droppedText}
+          </div>
+          {isCorrect !== null && (
+            <div className="flex-shrink-0">
+              {isCorrect ? (
+                <CheckCircle className="w-5 h-5 text-green-500" />
+              ) : (
+                <XCircle className="w-5 h-5 text-red-500" />
+              )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
 };
 
 interface DraggableTextProps {
-  id: number;
-  text: string;
+  section: typeof letterSections[0];
+  isDragged: boolean;
 }
 
-const DraggableText: React.FC<DraggableTextProps> = ({ id, text }) => {
+
+
+const DraggableText: React.FC<DraggableTextProps> = ({ section, isDragged }) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.TEXT,
-    item: { id, text, type: ItemTypes.TEXT },
-    collect: monitor => ({
+    item: { id: section.id, text: section.text, type: ItemTypes.TEXT },
+    canDrag: section.type === 'draggable',
+    collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
+  if (section.type === 'separator') {
+    return <div className="my-4"></div>; // Adds a line space
+  }
+
+  if (section.type === 'normal') {
+    return <div className="block mb-2">{section.text}</div>;
+  }
+
   return (
-    <div
+    <span
       ref={drag}
-      className={`w-32 h-32 bg-blue-200 border border-blue-500 rounded-md flex items-center justify-center cursor-move ${
-        isDragging ? 'opacity-50' : 'opacity-100'
+      className={`inline cursor-move transition-all duration-200 px-1 rounded mb-2 ${
+        isDragged 
+          ? 'opacity-40 bg-gray-200' 
+          : isDragging 
+            ? 'opacity-60 scale-105' 
+            : `${section.color} hover:shadow-md`
       }`}
     >
-      {text}
-    </div>
+      {section.text}{' '}
+    </span>
   );
 };
 
-interface DragDropGameProps {
-  texts: string[];
-  correctAnswers: string[];
-  questions: string[];
-}
+export default function MarcoLetterActivity() {
+  const [droppedAnswers, setDroppedAnswers] = useState<Record<string, string>>({});
+  const [checkedAnswers, setCheckedAnswers] = useState<Record<string, boolean>>({});
+  const [showResults, setShowResults] = useState(false);
+  const [feedback, setFeedback] = useState('Hi this is Anna, Your helper for this activity, lets see how you do!');
+  const [emotion, setEmotion] = useState<'correct' | 'wrong'>('correct');
 
-export default function DragDropGame({
-  texts = ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
-  correctAnswers = ['Item 3', 'Item 1', 'Item 4', 'Item 2'],
-  questions = ['Which part shows Marco is trying to understand the others point of view?', 'Which part shows Marco is trying to understand the others point of point?', 'Explain Z.', 'Describe W.']
-}: DragDropGameProps) {
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [placedTexts, setPlacedTexts] = useState<(string | null)[]>([null, null, null, null]);
-  const [showModal, setShowModal] = useState(false);
-  const [results, setResults] = useState({ correct: 0, wrong: 0 });
-
-  const handleDrop = (placeholderId: number, item: DragItem) => {
-    const newPlacedTexts = [...placedTexts];
-    const sourceIndex = newPlacedTexts.findIndex(text => text === item.text);
-
-    if (sourceIndex !== -1 && sourceIndex !== placeholderId) {
-      const temp = newPlacedTexts[placeholderId];
-      newPlacedTexts[placeholderId] = item.text;
-      newPlacedTexts[sourceIndex] = temp;
-    } else {
-      newPlacedTexts[placeholderId] = item.text;
-    }
-
-    setPlacedTexts(newPlacedTexts);
-
-    if (currentTextIndex < texts.length && item.text === texts[currentTextIndex]) {
-      setCurrentTextIndex(prev => prev + 1);
-    }
+  const handleDrop = (questionId: string, text: string) => {
+    // Remove the text from any previous location
+    const newAnswers = { ...droppedAnswers };
+    Object.keys(newAnswers).forEach(key => {
+      if (newAnswers[key] === text) {
+        delete newAnswers[key];
+      }
+    });
+    
+    // Add to new location
+    newAnswers[questionId] = text;
+    setDroppedAnswers(newAnswers);
+    
+    // Clear results when answers change
+    setShowResults(false);
+    setCheckedAnswers({});
   };
 
-  const handleMove = (targetId: number, sourceId: number) => {
-    const newPlacedTexts = [...placedTexts];
-    const sourceText = newPlacedTexts[sourceId];
-    newPlacedTexts[sourceId] = newPlacedTexts[targetId];
-    newPlacedTexts[targetId] = sourceText;
-    setPlacedTexts(newPlacedTexts);
+  const checkAnswers = () => {
+    const results: Record<string, boolean> = {};
+    questions.forEach(question => {
+      const userAnswer = droppedAnswers[question.id];
+      results[question.id] = userAnswer === question.correctAnswer;
+    });
+    setCheckedAnswers(results);
+    setShowResults(true);
+    if(Object.values(results).filter(Boolean).length === questions.length){
+       setFeedback("Excellent! You've correctly identified all the communication elements in James's message.")
+       setEmotion('correct');
+      }else{
+       setFeedback("Good effort! Review the incorrect answers and try again to improve your understanding.")
+       setEmotion('wrong');}
   };
 
-  const handleCheck = () => {
-    let correct = 0;
-    let wrong = 0;
-    for (let i = 0; i < correctAnswers.length; i++) {
-      if (placedTexts[i] === correctAnswers[i]) correct++;
-      else wrong++;
-    }
-    setResults({ correct, wrong });
-    setShowModal(true);
+  const resetActivity = () => {
+    setDroppedAnswers({});
+    setCheckedAnswers({});
+    setShowResults(false);
+    setFeedback('Okay, lets try again! ');
+    setEmotion("correct")
   };
 
-  const handleCloseModal = () => setShowModal(false);
+  const allAnswered = questions.every(q => droppedAnswers[q.id]);
+  const correctCount = Object.values(checkedAnswers).filter(Boolean).length;
+  const draggedTexts = new Set(Object.values(droppedAnswers));
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col items-center justify-center bg-gray-100 w-[80%]">
-        <div className="flex justify-center space-x-4 mb-8">
-          {placedTexts.map((text, index) => (
-            <Placeholder
-              key={index}
-              id={index}
-              text={text}
-              label={questions[index] || `Question ${index + 1}`}
-              onDrop={handleDrop}
-              onMove={handleMove}
-            />
-          ))}
-        </div>
+      <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Header */}
+          
 
-        <div className="mb-8">
-          {currentTextIndex < texts.length ? (
-            <DraggableText id={currentTextIndex} text={texts[currentTextIndex]} />
-          ) : null}
-        </div>
+          <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Letter Section */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">James Message</h2>
+                <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-lg border-l-4 border-orange-300 shadow-sm">
+                  <div className="font-handwriting text-lg leading-relaxed text-gray-800">
+                    {letterSections.map((section, index) => (
+                      <DraggableText
+                        key={section.id}
+                        section={section}
+                        isDragged={draggedTexts.has(section.text)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
 
-        <button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          onClick={handleCheck}
-          disabled={currentTextIndex < texts.length || placedTexts.includes(null)}
-        >
-          Check Results
-        </button>
-
-        {showModal && (
-          <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-8 rounded-md">
-              <h2 className="text-2xl font-bold mb-4">Results</h2>
-              <p className="text-lg">Correct: {results.correct}</p>
-              <p className="text-lg">Wrong: {results.wrong}</p>
-              <button
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"
-                onClick={handleCloseModal}
-              >
-                Close
-              </button>
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-700">
+                  <strong>Instructions:</strong> Drag the highlighted sentences from James Message to match them with the correct communication concepts below.
+                </p>
+              </div>
             </div>
+
+            {/* Questions Section */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-800">Communication Analysis</h2>
+              
+              <div className="space-y-4">
+                {questions.map((question) => (
+                  <DropZone
+                    key={question.id}
+                    question={question}
+                    droppedText={droppedAnswers[question.id] || null}
+                    onDrop={handleDrop}
+                    isCorrect={showResults ? checkedAnswers[question.id] : null}
+                  />
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={checkAnswers}
+                  disabled={!allAnswered}
+                  className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                    allAnswered
+                      ? 'bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  Check Answers
+                </button>
+                
+                <button
+                  onClick={resetActivity}
+                  className="flex items-center gap-2 py-3 px-6 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Reset
+                </button>
+              </div>
+
+              {/* Results */}
+              {showResults && (
+                <div className={`p-4 rounded-lg border-2 ${
+                  correctCount === questions.length 
+                    ? 'bg-green-50 border-green-300' 
+                    : 'bg-yellow-50 border-yellow-300'
+                }`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    {correctCount === questions.length ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-yellow-600" />
+                    )}
+                    <span className="font-semibold">
+                      Results: {correctCount} out of {questions.length} correct
+                    </span>
+                  </div>
+                    
+                </div>
+              )}
+            </div>
+            
           </div>
-        )}
+        </div>
+        <AvatarFeedback feedback={feedback} emotion={emotion} />
       </div>
     </DndProvider>
   );

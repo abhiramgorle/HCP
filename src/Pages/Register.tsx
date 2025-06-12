@@ -44,7 +44,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8888/php-backend-api/api/register.php', { 
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/register.php`, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

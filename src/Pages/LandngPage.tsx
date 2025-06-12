@@ -18,9 +18,13 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     const hash = location.hash;
     if (hash) {
-      const element = document.querySelector(hash);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+      try {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } catch (e) {
+        console.log("invalid hash to scroll to", hash);
       }
     }
   }, [location]);

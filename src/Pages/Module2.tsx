@@ -3,7 +3,6 @@ import P2Sidebar from '../Components/P2Sidebar';
 import ProgressBar from '../Components/ProgressBar';
 import ModuleHead from '../Components/ModuleHead';
 import Breadcrumb from '../Components/Breadcrumb';
-import FindingInfo from '../Module1/FindingInfo';
 import Introduction from '../Module1/Part2/Introduction';
 import Connecting_Meaning from '../Module1/Part2/Connecting_Meaning';
 import CaregiversStories1 from '../Module1/Part2/CaregiversStories1';
@@ -20,25 +19,28 @@ import FutureUncertainty from '../Module1/Part2/FutureUncertainty';
 import DistressingEmotions from '../Module1/Part2/DistressingEmotions';
 import Conclusion from '../Module1/Part2/Conclusion';
 
+import { useAuth } from '../auth/AuthContext';
+
 //Part 1 Modules
 
 
 const Module2 = () => {
+  const {token} = useAuth();
   const sections = [
     { id: 'introduction2', title: 'Introduction', sub:false},
     { id: 'connecting-meeting', title: 'Connecting to Meaning', sub:false},
-    {id: 'caregivers-stories1', title: 'Caregivers Stories', sub:false},
-    {id:'reflection-activity1', title: 'Reflection Activity', sub:false},
+    {id: 'caregivers-stories1', title: 'Caregivers Stories', sub:true},
+    {id:'reflection-activity1', title: 'Reflection Activity 1', sub:true},
     { id: 'strengthening-family', title: 'Strengthening Family Bonds', sub:false},
-    {id: 'caregivers-stories2', title: 'Caregivers Stories', sub:false},
-    { id: 'reflection-activity2', title: 'Reflection Activity', sub:true},
+    {id: 'caregivers-stories2', title: 'Caregivers Stories', sub:true},
+    { id: 'reflection-activity2', title: 'Reflection Activity 2', sub:true},
     {id:'challenges-communication', title: 'Challenges and Communication Skills', sub:false},
-    {id:'caregivers-stories3', title: 'Caregivers Stories', sub:false},
-    {id:'strategies-activity', title: 'Strategies Activity', sub:false},
+    {id:'caregivers-stories3', title: 'Caregivers Stories', sub:true},
+    {id:'strategies-activity', title: 'Strategies Activity', sub:true},
     {id:  'practicing-skills' , title: 'Practicing Skills', sub:false},
-    {id: 'relational-intimacy', title: 'Relational Intimacy', sub:false},
-    {id: 'future-uncertainty', title: 'Futere Uncertainty and Mortality', sub:false},
-    {id: 'distressing-emotions', title: 'Distressing Emotions and Concerns', sub:false}, 
+    {id: 'relational-intimacy', title: 'Relational Intimacy', sub:true},
+    {id: 'future-uncertainty', title: 'Futere Uncertainty and Mortality', sub:true},
+    {id: 'distressing-emotions', title: 'Distressing Emotions and Concerns', sub:true}, 
     {id: 'conclusion', title: 'Conclusion', sub:false},
   ];
 
@@ -106,9 +108,12 @@ const Module2 = () => {
     const currentIndex = sections.findIndex((section) => section.id === currentSection);
     const userEmail = JSON.parse(localStorage.getItem("currentUser") || "{}").email;
 
-    fetch("http://localhost:8888/php-backend-api/api/update_progress.php", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/update_progress.php`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers:{
+        "Authorization": `Bearer ${token}`, // Use token for authorization
+        "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+      },
       body: JSON.stringify({
         email: userEmail,
         section_code: sections[currentIndex].id,
@@ -136,8 +141,13 @@ const Module2 = () => {
   }, [sections]);
 
   useEffect(() => {
+    if(!token) return;
     const email = JSON.parse(localStorage.getItem("currentUser") || "{}").email;
-    fetch(`http://localhost:8888/php-backend-api/api/get_progress.php?email=${email}`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/get_progress.php`,
+      {headers:{
+        "Authorization": `Bearer ${token}`, // Use token for authorization
+        "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+      }})
       .then(res => res.json())
       .then(data => {
         const lastSection = data.find(d => d.part_id === 2 && !d.is_completed);
@@ -145,7 +155,7 @@ const Module2 = () => {
           handleSectionChange(lastSection.section_code);
         }
       });
-  }, []);
+  }, [token]);
   
 
   return (

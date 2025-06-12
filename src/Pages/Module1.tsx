@@ -7,8 +7,6 @@ import FindingInfo from '../Module1/FindingInfo';
 import Critical_ehealth_Informal from '../Module1/Critical_ehealth_Informal';
 
 
-import Clinical_Health_Task from '../Module1/Clinical_Health_Task';
-import Communicative_ehealth_task from '../Module1/Communicative_ehealth_task';
 import Module_ending from '../Module1/Module_ending';
 //Part 1 Modules
 import Introduction from '../Module1/Part1/Introduction';
@@ -19,17 +17,22 @@ import Communicative_eHealth from '../Module1/Part1/Communicative_eHealth';
 import Marcos_Story_Chapter2 from '../Module1/Part1/Marcos_Story_Chapter2';
 import Marcos_Story_Chapter3 from '../Module1/Part1/Marcos_Story_Chapter3';
 import Communication_with_doctors from '../Module1/Part1/Communication_with_doctors';
+import Resonding_to_James from '../Module1/Part1/Responding_to_James';
+import { useAuth } from '../auth/AuthContext';
 
 const Module1 = () => {
+
+  const {token} = useAuth();
   const sections = [
     { id: 'introduction1', title: 'Introduction', sub:false},
     { id: 'critical-eliteracy', title: 'Critical eHealth Literacy', sub:false },
-    {id: 'marcosStory-chapter1', title: 'Marcos Story Chapter 1', sub:false},
-    {id:'hope-activity', title: 'Hope Activity', sub:false},
+    {id: 'marcosStory-chapter1', title: 'Marcos Story Chapter 1', sub:true},
+    {id:'hope-activity', title: 'Hope Activity', sub:true},
     { id: 'communicative-literacy', title: 'Communicative eHealth Literacy' },
-    {id: 'marcosStory-chapter2', title: 'Marcos Story Chapter 2', sub:false},
+    {id: 'marcosStory-chapter2', title: 'Marcos Story Chapter 2', sub:true},
+    {id: 'responding-to-james', title: 'Responding to James son', sub:true},
     { id: 'clinical-literacy', title: 'Clinical eHealth Literacy' },
-    {id:'marcosStory-chapter3', title: 'Marcos Story Chapter 3', sub:false},
+    {id:'marcosStory-chapter3', title: 'Marcos Story Chapter 3', sub:true},
     {id:'communication-with-doctors', title: 'Communication with Doctors', sub:false},
     {id:'paces-introduction', title: 'PACES Introduction', sub:false},
     {id:  'p-present' , title: 'P: Present Information', sub:true},
@@ -56,6 +59,8 @@ const Module1 = () => {
           return <Communicative_eHealth />;
       case 'marcosStory-chapter2':
           return <Marcos_Story_Chapter2 />;
+      case 'responding-to-james':
+        return <Resonding_to_James />;
       case 'critical-literacy':
         return <Critical_ehealth_Informal />;
       case 'marcosStory-chapter3':
@@ -103,9 +108,14 @@ const Module1 = () => {
     const currentIndex = sections.findIndex((section) => section.id === currentSection);
     const userEmail = JSON.parse(localStorage.getItem("currentUser") || "{}").email;
 
-    fetch("http://localhost:8888/php-backend-api/api/update_progress.php", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/update_progress.php`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      
+        headers:{
+          "Authorization": `Bearer ${token}`, // Use token for authorization
+          "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+        },
+      
       body: JSON.stringify({
         email: userEmail,
         section_code: sections[currentIndex].id,
@@ -133,8 +143,14 @@ const Module1 = () => {
   }, [sections]);
 
   useEffect(() => {
+    if (!token) return; // Ensure token is available before making the request
     const email = JSON.parse(localStorage.getItem("currentUser") || "{}").email;
-    fetch(`http://localhost:8888/php-backend-api/api/get_progress.php?email=${email}`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/get_progress.php`,
+      {headers:{
+        "Authorization": `Bearer ${token}`, // Use token for authorization
+        "Content-Type": "application/json" // Ensure the server knows we're sending JSON
+      }}
+    )
       .then(res => res.json())
       .then(data => {
         const lastSection = data.find(d => d.part_id === 1 && !d.is_completed);
@@ -142,7 +158,7 @@ const Module1 = () => {
           handleSectionChange(lastSection.section_code);
         }
       });
-  }, []);
+  }, [token]);
   
 
   return (

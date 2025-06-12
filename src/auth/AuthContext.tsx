@@ -4,14 +4,13 @@ import React, { createContext, useState, useContext, useEffect, ReactNode} from 
 interface User {
   email: string;
   name: string;
-  relationToPatient?: string; 
-  location?: string;
   // Add any other fields 
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (userData: User, token?: string) => void; // token is optional, for JWT etc.
+  token: string | null; 
+  login: (userData: User, token: string) => void; // token is optional, for JWT etc.
   logout: () => void;
   isLoading: boolean; // To check if loading user from storage
 }
@@ -20,14 +19,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Start with loading true
+  const [token , setToken] = useState<string | null>(null); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     // Try to load user from localStorage on initial app load
     try {
       const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
+      const storedToken = localStorage.getItem('authToken'); 
+      if (storedUser && storedToken) {
         setUser(JSON.parse(storedUser));
+        setToken(storedToken);
       }
     } catch (error) {
       console.error("Failed to parse user from localStorage", error);
@@ -36,23 +38,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(false); // Done loading
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: User,token:string) => {
     setUser(userData);
+    setToken(token);
     localStorage.setItem('currentUser', JSON.stringify(userData));
+    localStorage.setItem('authToken', token);
     // If you implement token-based auth, store the token securely (e.g., localStorage or HttpOnly cookie managed by backend)
     // localStorage.setItem('authToken', token);
   };
 
   const logout = () => {
     setUser(null);
+    setToken(null);
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
     // localStorage.removeItem('authToken');
     // You might want to redirect to login page or home page here
     // window.location.href = '/login';
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
