@@ -138,7 +138,7 @@ const LandingPage: React.FC = () => {
           </p>
           <a
             className="text-md font-semibold inline-flex underline decoration-red-600 underline-offset-6 items-center gap-1"
-            href="#"
+            href="course"
           >
             Learn more about Facilitating Open and Supportive Communication In the Family →
           </a>
